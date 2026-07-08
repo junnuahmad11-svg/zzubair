@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Z — Chitti Management</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#080810;--bg2:#0e0e1c;--bgc:#111120;--bgch:#16162a;--bgi:#0a0a18;
+  --g:#f0b429;--gl:#ffd166;--gd:#c88a00;--am:#ff9f1c;
+  --em:#06d6a0;--emd:#04a87e;--rb:#ef233c;--rbd:#c01831;
+  --sa:#4895ef;--vi:#b185db;--ro:#ff6b9d;--tl:#2ec4b6;
+  --tp:#f0e6ce;--ts:#8a7560;--tm:#3a3020;
+  --bd:rgba(240,180,41,.18);--bdb:rgba(240,180,41,.55);
+  --sg:0 0 24px rgba(240,180,41,.12);--sgl:0 0 48px rgba(240,180,41,.22);
+  --r:14px;--rs:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 10% 10%,rgba(240,180,41,.05) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 90%,rgba(255,159,28,.04) 0%,transparent 60%);
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gd);border-radius:3px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideR{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes checkPop{0%{transform:scale(0)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+.fia{animation:fadeIn .3s ease forwards}
+.sra{animation:slideR .25s ease forwards}
+
+/* Header */
+.hdr{position:sticky;top:0;z-index:200;background:rgba(8,8,16,.94);backdrop-filter:blur(24px);border-bottom:1px solid var(--bd);padding:0 24px;height:64px;display:flex;align-items:center}
+.hdr-in{max-width:1440px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:12px;cursor:pointer}
+.logo-b{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--g),var(--am));display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;color:#080810;box-shadow:0 0 18px rgba(240,180,41,.45);flex-shrink:0}
+.logo-n{font-size:16px;font-weight:800;letter-spacing:.8px;background:linear-gradient(90deg,var(--gl),var(--g));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.logo-t{font-size:10px;color:var(--ts);letter-spacing:.4px;margin-top:1px}
+.hdr-a{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .2s;letter-spacing:.2px;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(0)}
+.btn-g{background:linear-gradient(135deg,var(--g),var(--am));color:#080810;box-shadow:0 4px 14px rgba(240,180,41,.32)}
+.btn-g:hover{box-shadow:0 6px 24px rgba(240,180,41,.5)}
+.btn-e{background:linear-gradient(135deg,var(--em),var(--emd));color:#080810;box-shadow:0 4px 14px rgba(6,214,160,.28)}
+.btn-e:hover{box-shadow:0 6px 24px rgba(6,214,160,.5)}
+.btn-r{background:linear-gradient(135deg,var(--rb),var(--rbd));color:#fff;box-shadow:0 4px 14px rgba(239,35,60,.28)}
+.btn-r:hover{box-shadow:0 6px 24px rgba(239,35,60,.48)}
+.btn-gh{background:transparent;color:var(--ts);border:1px solid var(--bd)}
+.btn-gh:hover{background:var(--bgc);color:var(--tp);border-color:var(--bdb)}
+.btn-o{background:transparent;color:var(--g);border:1px solid var(--bdb)}
+.btn-o:hover{background:rgba(240,180,41,.08)}
+.btn-w{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;box-shadow:0 4px 14px rgba(37,211,102,.28)}
+.btn-w:hover{box-shadow:0 6px 24px rgba(37,211,102,.5)}
+.btn-sa{background:linear-gradient(135deg,var(--sa),#3a7bd5);color:#fff;box-shadow:0 4px 14px rgba(72,149,239,.28)}
+.btn-sa:hover{box-shadow:0 6px 24px rgba(72,149,239,.48)}
+.btn-vi{background:linear-gradient(135deg,var(--vi),#8a5cc5);color:#fff;box-shadow:0 4px 14px rgba(177,133,219,.28)}
+.btn-vi:hover{box-shadow:0 6px 24px rgba(177,133,219,.48)}
+.btn-sm{padding:7px 13px;font-size:12px;border-radius:8px}
+.btn-xs{padding:5px 10px;font-size:11px;border-radius:6px}
+.btn-f{width:100%;justify-content:center;padding:13px;font-size:14px}
+.btn-dis{opacity:.45;pointer-events:none}
+
+/* Cards */
+.crd{background:var(--bgc);border:1px solid var(--bd);border-radius:var(--r);padding:22px;transition:border-color .2s,box-shadow .2s}
+.crd:hover{border-color:rgba(240,180,41,.32);box-shadow:var(--sg)}
+.crd-g{border-color:rgba(240,180,41,.35)}.crd-e{border-color:rgba(6,214,160,.3)}
+.crd-r{border-color:rgba(239,35,60,.3)}.crd-s{border-color:rgba(72,149,239,.3)}
+.crd-v{border-color:rgba(177,133,219,.3)}.crd-ro{border-color:rgba(255,107,157,.3)}
+
+/* Stat Card */
+.sc{background:var(--bgc);border-radius:var(--r);padding:22px 20px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s;cursor:default}
+.sc::after{content:'';position:absolute;inset:0;border-radius:var(--r);border:1px solid transparent;background:var(--grad) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.sc:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.sc-gl{position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;filter:blur(35px);opacity:.3}
+
+/* Member Card */
+.mc{background:var(--bgc);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+.mc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--g),var(--am));border-radius:0 2px 2px 0}
+.mc:hover{border-color:var(--bdb);box-shadow:var(--sg);transform:translateX(3px) translateY(-1px);background:var(--bgch)}
+.mc-av{width:48px;height:48px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,rgba(240,180,41,.15),rgba(255,159,28,.08));border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--g)}
+.mc-nm{font-size:17px;font-weight:800;line-height:1.2;background:linear-gradient(90deg,var(--gl),var(--g));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.mc-sub{font-size:11px;color:var(--ts);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mc-rt{margin-left:auto;display:flex;gap:12px;align-items:center;flex-shrink:0}
+.ab{text-align:right}.ab-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;opacity:.65}.ab-v{font-size:14px;font-weight:800;line-height:1.2}
+
+/* Badges */
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.bdg-a{background:rgba(6,214,160,.12);color:var(--em);border:1px solid rgba(6,214,160,.25)}
+.bdg-q{background:rgba(100,100,100,.15);color:#777;border:1px solid rgba(100,100,100,.25)}
+.bdg-p{background:rgba(6,214,160,.12);color:var(--em);border:1px solid rgba(6,214,160,.25)}
+.bdg-pt{background:rgba(240,180,41,.12);color:var(--g);border:1px solid rgba(240,180,41,.25)}
+.bdg-u{background:rgba(239,35,60,.12);color:var(--rb);border:1px solid rgba(239,35,60,.25)}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.dot-a{background:var(--em);box-shadow:0 0 6px rgba(6,214,160,.7)}.dot-q{background:#555}
+
+/* Search */
+.swrp{position:relative}
+.sico{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--ts);pointer-events:none}
+.sinp{width:100%;padding:14px 16px 14px 48px;background:var(--bgc);border:1.5px solid var(--bd);border-radius:12px;color:var(--tp);font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:all .2s}
+.sinp::placeholder{color:var(--tm)}.sinp:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(240,180,41,.12),var(--sg)}
+
+/* Tabs */
+.tabs{display:flex;gap:3px;background:var(--bg2);border-radius:11px;padding:4px;border:1px solid var(--bd)}
+.tab{flex:1;padding:9px 14px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;background:transparent;color:var(--ts);transition:all .2s;white-space:nowrap}
+.tab.on{background:linear-gradient(135deg,var(--g),var(--am));color:#080810;box-shadow:0 2px 10px rgba(240,180,41,.3)}
+
+/* Forms */
+.fg{margin-bottom:18px}
+.fl{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ts);margin-bottom:7px}
+.fi{width:100%;padding:11px 14px;background:var(--bgi);border:1.5px solid var(--bd);border-radius:10px;color:var(--tp);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:all .2s}
+.fi::placeholder{color:var(--tm)}.fi:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(240,180,41,.1)}
+.fi.er{border-color:var(--rb)}.fi-e{font-size:11px;color:var(--rb);margin-top:4px}
+.fi-ta{min-height:90px;resize:vertical}
+.fsec{background:var(--bg2);border-radius:12px;padding:20px;border:1px solid var(--bd);margin-bottom:18px}
+.fsec-t{font-size:12px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.crow{display:grid;grid-template-columns:90px 1fr auto;gap:10px;align-items:end;margin-bottom:10px}
+
+/* Grids */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.g4,.g3,.g2{grid-template-columns:1fr}.mc-rt{display:none}.hdr{padding:0 12px}.pg{padding:16px 12px!important}.crow{grid-template-columns:70px 1fr auto}.hdr-a{gap:6px}}
+
+/* Info rows */
+.ir{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(240,180,41,.08)}.ir:last-child{border-bottom:none}
+.ir-i{font-size:16px;width:24px;text-align:center;flex-shrink:0;margin-top:1px}
+.ir-l{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--ts)}
+.ir-v{font-size:14px;font-weight:600;color:var(--tp);margin-top:2px}
+
+/* Page */
+.pg{padding:28px 24px;max-width:1440px;margin:0 auto;animation:fadeIn .3s ease}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.sh-t{font-size:17px;font-weight:700}.sh-t span{color:var(--g)}
+
+/* Overlay/Modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.84);display:flex;align-items:center;justify-content:center;z-index:500;padding:20px;backdrop-filter:blur(6px);animation:fadeIn .2s ease}
+.mdl{background:var(--bgc);border:1px solid var(--bdb);border-radius:18px;padding:28px;max-width:500px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.7),var(--sgl);animation:fadeIn .25s ease;max-height:90vh;overflow-y:auto}
+.mdl-lg{max-width:640px}
+.mdl-t{font-size:19px;font-weight:800;margin-bottom:10px}
+.mdl-tx{font-size:13px;color:var(--ts);margin-bottom:22px;line-height:1.65}
+.mdl-a{display:flex;gap:10px}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;padding:10px 12px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--g);border-bottom:1px solid var(--bd);background:var(--bg2);white-space:nowrap}
+.tbl td{padding:12px;border-bottom:1px solid rgba(240,180,41,.06);font-size:13px;vertical-align:middle}
+.tbl tr:hover td{background:var(--bgch)}
+.tbw{overflow-x:auto;border-radius:10px}
+
+/* Select */
+.msel{padding:9px 14px;background:var(--bgc);border:1.5px solid var(--bd);border-radius:10px;color:var(--tp);font-family:'Inter',sans-serif;font-size:13px;outline:none;cursor:pointer}
+.msel:focus{border-color:var(--g)}.msel option{background:var(--bgc)}
+
+/* Text */
+.tg{color:var(--g)}.tgg{background:linear-gradient(90deg,var(--gl),var(--am));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.te{color:var(--em)}.tr2{color:var(--rb)}.ts2{color:var(--sa)}.tv{color:var(--vi)}.tro{color:var(--ro)}.ttl{color:var(--tl)}
+.bn{font-size:34px;font-weight:900;line-height:1;filter:drop-shadow(0 0 6px currentColor)}
+
+/* Empty */
+.emp{text-align:center;padding:48px 20px;color:var(--ts)}
+.emp-i{font-size:48px;margin-bottom:14px;opacity:.45}
+.emp-t{font-size:15px;font-weight:600}
+.emp-s{font-size:12px;margin-top:5px;opacity:.7}
+
+/* Notification */
+.ntf{position:fixed;bottom:22px;right:22px;z-index:9999;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:600;box-shadow:0 8px 28px rgba(0,0,0,.55);animation:slideR .3s ease;display:flex;align-items:center;gap:9px;max-width:360px}
+.ntf-s{background:var(--emd);color:#fff}.ntf-e{background:var(--rbd);color:#fff}.ntf-i{background:var(--gd);color:#fff}
+
+/* Back */
+.bk{display:inline-flex;align-items:center;gap:7px;color:var(--ts);font-size:13px;cursor:pointer;border:none;background:none;font-family:'Inter',sans-serif;transition:color .2s;padding:7px 0}
+.bk:hover{color:var(--g)}
+
+/* Count pill */
+.cp{display:inline-flex;align-items:center;justify-content:center;background:rgba(240,180,41,.15);color:var(--g);font-size:11px;font-weight:700;border-radius:20px;padding:1px 7px;margin-left:5px}
+
+/* Checkbox */
+.chk{width:20px;height:20px;border-radius:6px;border:2px solid var(--bd);background:var(--bgi);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.chk.on{background:var(--g);border-color:var(--g)}
+.chk.on::after{content:'✓';color:#080810;font-size:13px;font-weight:800;animation:checkPop .3s ease}
+.chk:hover{border-color:var(--g)}
+
+/* Reminder list item */
+.rem-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--bd);transition:all .15s}
+.rem-item:hover{border-color:var(--bdb);background:var(--bgch)}
+.rem-item.sel{border-color:rgba(37,211,102,.4);background:rgba(37,211,102,.04)}
+
+/* Progress bar */
+.prog-bar{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;border-radius:3px;transition:width .3s ease}
+
+/* Sending indicator */
+.sending{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(37,211,102,.08);border-radius:10px;border:1px solid rgba(37,211,102,.2);margin-bottom:12px;font-size:13px;color:var(--em)}
+.sending-dot{width:8px;height:8px;border-radius:50%;background:var(--em);animation:pulse 1s infinite}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useMemo,useCallback,useRef}=React;
+
+/* Helpers */
+const fmt=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+const cap=s=>s?s.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' '):'';
+const ini=n=>n?n.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2):'?';
+const curM=()=>new Date().toISOString().slice(0,7);
+const mLbl=ym=>{const[y,m]=ym.split('-');return new Date(y,m-1,1).toLocaleString('en',{month:'long',year:'numeric'})};
+
+/* DB */
+const DB={
+  g:k=>{try{return JSON.parse(localStorage.getItem('zc_'+k))||[]}catch{return[]}},
+  s:(k,v)=>localStorage.setItem('zc_'+k,JSON.stringify(v)),
+  nid:k=>{const d=DB.g(k);return d.length?Math.max(...d.map(i=>i.id))+1:1},
+  ver:()=>localStorage.getItem('zc_ver')
+};
+
+/* === SEED === */
+function seed(){
+  if(DB.ver()==='3')return;
+  ['members','chittis','rdEntries','payments'].forEach(k=>localStorage.removeItem('zc_'+k));
+  const now=new Date().toISOString();
+  const M=[],C=[],R=[];
+  let mid=0,cid=0,rid=0;
+
+  function a(name,loc,ch,rdAmt,o={}){
+    mid++;
+    M.push({id:mid,name,nickname:o.nk||'',phone:o.ph||'',location:loc,notes:o.nt||'',status:'active',createdAt:now});
+    if(ch&&ch.length)ch.forEach(([n,v])=>{cid++;C.push({id:cid,memberId:mid,chittiNumber:String(n),amount:v,createdAt:now})});
+    if(rdAmt>0){rid++;R.push({id:rid,memberId:mid,amount:rdAmt,createdAt:now})}
+  }
+
+  a('Athiq','RTC',[['5',6000],['15',6000]],0);
+  a('Amathulla','',[['16a',2500],['16b',5000]],1300);
+  a('Asgar','Excise',[['3',20000]],0);
+  a('Amani Mami','',[['4',10000],['15',5000]],0);
+  a('Azmath','C/O Raheem',[['13',6000]],0);
+  a('Afreen','TPT',[['3a',5000],['3b',6000]],0);
+  a('Afroz','Channaram',[['13',6000]],0);
+  a('Afzal','C/O Basheer',[['11',6000],['12',6000]],0);
+  a('Akhtar','C/O Sumaiah',[['11',6000],['12',6000],['18',12000]],0);
+  a('Ahmed','BED College',[['6',18000]],0,{nk:'Ahmed BED'});
+  a('Ahmed','NTV',[['16',6000]],0,{nk:'Ahmed NTV'});
+  a('Anwar','Police',[['8',6000]],0);
+  a('Athiya Jabeen','C/O TR Jamal',[['15',6000],['17',6000]],0);
+  a('Asif','Kanchanpally',[['13',6000]],0,{nk:'Shonna'});
+  a('Akheel','Kanchanpally',[['10',2500]],0);
+  a('Ali','',[['6',6000]],1500);
+  a('Basheer','TR',[['5',12000],['17',12000],['8',30000],['12',6000],['13',12000],['2',6000]],2000);
+  a('Bilqis Mami','',null,1500);
+  a('Chand Pasha','Banni',[['12',6000],['20',3000]],0,{nk:'Chand Banni'});
+  a('Chand Pasha','Haliya',[['3',3000]],0,{nk:'Chand Haliya'});
+  a('Dastagir','Bank Retired',[['3',12000]],0);
+  a('Firdose Khan','',[['3',12000],['18',2500]],4000);
+  a('Fouzia','TR',[['Lot',70500]],0,{nt:'Multiple Chittis combined'});
+  a('Gita','Kiranam',[['6',15000],['Spl',5000]],0);
+  a('Gouse Nawab','',[['10',6000],['Spl',2000]],0);
+  a('Hasham','TPT',[['14',6000]],0);
+  a('Hazra','Bari Hyd',[['18',6000]],0);
+  a('Hussain','',[['4',5000]],0,{nk:'Mamu'});
+  a('Hussain Bhai','',[['18',5000],['12',3000]],0);
+  a('Hameed TR','TPT',[['Spl',12000]],0,{nk:'Hameed TPT'});
+  a('Hameed TR','Puttapaka',[['14',5000]],0,{nk:'Hameed Puttapaka'});
+  a('Habeeb','Retired Police',[['10',5000]],2000);
+  a('Hafeez','B/O Nusrath',[['6',12000]],0);
+  a('Hari Prasad','Kanchanpally',[['4',12000]],0);
+  a('Hafeeza TR','',[['19',6000],['15',3000],['16',6000]],0);
+  a('Irfan Reddy','Hotel',[['10',12000],['20',6000]],0);
+  a('Jaffar','Vellamla',[['13',5000]],0);
+  a('Jamal','Vipasya',[['3',6000]],0);
+  a('Jamal TR','HYD',[['4',12000],['5',12000],['6',6000]],0);
+  a('Janaiah Goud','TR',[['15',12000]],0);
+  a('Jahangir Bhai','VRO',[['4',5000]],1000);
+  a('Jayamma','Kammapati',[['18',5000]],0);
+  a('Jangamma','Bushapaka',[['10',5000]],0);
+  a('Kaleemulla Khan','Welding',[['14',24000],['18',25000]],0);
+  a('Khasim','LIC',[['4',5000]],0);
+  a('Kaleem','Post TPT',[['4a',25000],['4b',10000]],0);
+  a('Lathif','Drugs',[['6',12000],['11',6000]],3500);
+  a('Mustafa','Jail',[['19',6000],['10a',12000],['10b',3000]],0);
+  a('Maheshwari','Prakash',[['16',5000]],0);
+  a('Mazahar','',[['Spl',10000],['6',12000],['15',10000],['Ext',12000]],0,{nt:'Total chitti ₹44,000'});
+  a('Mahmood Ali','',[['11',6000],['15',6000]],0);
+  a('Madhar TR','',[['19',12000],['6',3000],['13',6000]],0);
+  a('Meera','Arifa',[['4',6000],['8',10000]],0);
+  a('Mosin','C/O Irfan',[['14',9000]],0);
+  a('Madhavi','C/O Rajitha',[['4',5000]],0);
+  a('Mansoor Bhai','',[['Spl',25000]],2000);
+  a('Nusrath Janu','',[['13',10000],['14',3000]],0);
+  a('Nazeer','Abcory',[['14',10000]],0);
+  a('Naseer','NST',[['3a',6000],['3b',6000]],0);
+  a('Nayeem','GEO',[['3',5000],['15',10000]],0);
+  a('Nadeem','TPT',[['4',3000],['16',6000]],0);
+  a('Osman','Retired Employee',[['15',15000]],0);
+  a('Pasha','Auto',[['12',3000],['16',15500]],0);
+  a('Parveen','Attender',[['16',18000],['Spl',5000],['19',6000]],0);
+  a('Parvez','B/O Parveen',[['12',6000]],0);
+  a('Prashanthi','Kanchanpally',[['4',10000],['10',10000]],0);
+  a('Reshma','W/O Galib',[['17',3000]],0);
+  a('Radha Krishna','',[['6',6000]],0);
+  a('Ravoof','Nusrath',[['8',3000]],0);
+  a('Rama Chary','',[['4',6000],['20',25000]],0);
+  a('Rabbu','',[['6',5000]],0);
+  a('Raju','Press',[['15',10000],['10',6000]],3000);
+  a('Rizwan','Land',[['3',12000]],1000);
+  a('Riyaz','Police',[['15',10000]],0);
+  a('Raheem','Drip',[['13',3000],['16',6000]],0,{nk:'Raheem Drip'});
+  a('Raheem','C/O TR Madhar',[['6',3000]],0,{nk:'Raheem TR'});
+  a('Rajitha','Shanker',[['4',5000],['8',6000]],0);
+  a('Rajamani','',[['4',6000],['19',11000]],0);
+  a('Riyaz SS','Xerox',[['13',12000]],0);
+  a('Sami Bhai','',[['4',6000],['6a',6000],['6b',12000],['10',30000],['19',30000]],0,{nt:'Biggest portfolio ₹84,000 + extras'});
+  a('Shaker','Sajida Apa',[['19',6000]],0);
+  a('Shareefa','',[['17',12000]],0);
+  a('Shabana','W/O Amjath',[['13',6000],['14',6000]],0);
+  a('Srikanth','Bakery',[['11',6000]],0);
+  a('Srinu TR','Suryapet',[['6',3000]],0);
+  a('Shaheda','Attender',[['4',5000]],0);
+  a('Sumaiah','C/O Sajida',[['3',6000]],0,{nk:'Sumaiah Sajida'});
+  a('Sumaiah','MS Garden',[['8a',25000],['8b',25000]],0,{nk:'Sumaiah Garden'});
+  a('Shameem TR','',[['15',18000],['17',12000]],0);
+  a('Shiva Narayana','',[['12',3000]],0);
+  a('Samsam Bhai','',[['15',12000],['11',6000]],0);
+  a('Satish','Gita Kiranam',[['6',15000],['Spl',5000]],0);
+  a('Shadab Khan','',[['13',5000],['15',3000],['Ext',5000]],2000,{nt:'Total ₹15,000 incl extras'});
+  a('Sattar Bhai','',[['6',6000]],0);
+  a('Suban','Auto',[['10',6000],['12',3000],['13',3000],['14',3000]],0);
+  a('Venkatamma','Rent',null,1000);
+  a('Vamshi TR','',[['10',3000],['14',3000]],0);
+  a('Venkanna','HYD',[['8',12000]],0);
+  a('Waseema','',[['16',5000],['6',2500]],1000);
+  a('Yaqub','Driver',[['8',12000],['14',12000]],0);
+  a('Yousuf Bhai','',[['13',6000],['Bullet-13',6000]],0);
+  a('Yasmeen TR','',[['8',10000]],0);
+  a('Yasmeen','W/O Firdose Khan',[['18',2500]],0,{nk:'W/O Firdose'});
+  a('Yaseen Bhai','',null,600);
+  a('Zareena Apa','',[['15',10000]],4000);
+  a('Zeeshan','Fruits',[['6a',12000],['6b',5000]],0);
+  a('Zilkha Mami','',[['4',5000]],0);
+
+  DB.s('members',M);DB.s('chittis',C);DB.s('rdEntries',R);DB.s('payments',[]);
+  localStorage.setItem('zc_ver','3');
+}
+seed();
+
+/* Notif */
+function Ntf({n,onClose}){
+  useEffect(()=>{if(n){const t=setTimeout(onClose,3500);return()=>clearTimeout(t)}},[n]);
+  if(!n)return null;
+  return<div className={`ntf ntf-${n.t==='success'?'s':n.t==='error'?'e':'i'}`}><span>{n.t==='success'?'✅':n.t==='error'?'❌':'ℹ️'}</span>{n.m}</div>;
+}
+
+/* Confirm */
+function Cfm({title,text,onOk,onNo,danger}){
+  return(<div className="ov" onClick={onNo}><div className="mdl" onClick={e=>e.stopPropagation()}>
+    <div className="mdl-t">{title}</div><div className="mdl-tx">{text}</div>
+    <div className="mdl-a"><button className="btn btn-gh btn-f" onClick={onNo}>Cancel</button><button className={`btn ${danger?'btn-r':'btn-g'} btn-f`} onClick={onOk}>Confirm</button></div>
+  </div></div>);
+}
+
+/* Reminder Modal */
+function ReminderModal({onClose,notify}){
+  const members=DB.g('members').filter(m=>m.status==='active');
+  const chittis=DB.g('chittis');
+  const rd=DB.g('rdEntries');
+  const payments=DB.g('payments');
+  const cMonth=curM();
+
+  const withPhone=members.filter(m=>m.phone&&m.phone.replace(/\D/g,'').length>=10);
+  const [selected,setSel]=useState(new Set(withPhone.map(m=>m.id)));
+  const [sending,setSending]=useState(false);
+  const [sent,setSent]=useState(new Set());
+  const [mode,setMode]=useState('select'); // select | unpaid | all
+  const [search,setSearch]=useState('');
+
+  const ct=mId=>chittis.filter(c=>c.memberId===mId).reduce((s,c)=>s+Number(c.amount),0);
+  const rt=mId=>rd.filter(r=>r.memberId===mId).reduce((s,r)=>s+Number(r.amount),0);
+  const isPaid=mId=>{const p=payments.find(pp=>pp.memberId===mId&&pp.month===cMonth);return p&&p.status==='paid'};
+
+  const unpaidWithPhone=withPhone.filter(m=>!isPaid(m.id));
+
+  const toggle=id=>{
+    setSel(prev=>{const n=new Set(prev);if(n.has(id))n.delete(id);else n.add(id);return n});
+  };
+
+  const selectAll=()=>setSel(new Set(withPhone.map(m=>m.id)));
+  const selectNone=()=>setSel(new Set());
+  const selectUnpaid=()=>setSel(new Set(unpaidWithPhone.map(m=>m.id)));
+
+  const filteredMembers=useMemo(()=>{
+    const lq=search.toLowerCase().trim();
+    let list=withPhone;
+    if(!lq)return list;
+    return list.filter(m=>m.name.toLowerCase().includes(lq)||(m.nickname||'').toLowerCase().includes(lq)||(m.location||'').toLowerCase().includes(lq));
+  },[withPhone,search]);
+
+  const buildMsg=(m)=>{
+    const mc=chittis.filter(c=>c.memberId===m.id);
+    const mr=rd.filter(r=>r.memberId===m.id);
+    const cTotal=mc.reduce((s,c)=>s+Number(c.amount),0);
+    const rTotal=mr.reduce((s,r)=>s+Number(r.amount),0);
+    const total=cTotal+rTotal;
+    const cLines=mc.map(c=>`  🎟 Chitti #${c.chittiNumber}: ${fmt(c.amount)}`).join('\n');
+    const rLine=mr.length?`\n  💳 RD (Monthly): ${fmt(rTotal)}`:'';
+    return `Dear ${cap(m.name)},\n\nAssalamu Alaikum! I hope this message finds you well.\n\nHere are your payment details for the Chitti:\n\n${cLines}${rLine}\n\n📊 Total Amount Due: ${fmt(total)}\n\nKindly arrange the payment at your earliest convenience.\n\nJazakAllahu Khairan!\n\nBest regards,\nZ — Chitti Management`;
+  };
+
+  const sendReminders=async()=>{
+    const toSend=[...selected].map(id=>withPhone.find(m=>m.id===id)).filter(Boolean);
+    if(toSend.length===0)return;
+    setSending(true);
+    for(let i=0;i<toSend.length;i++){
+      const m=toSend[i];
+      const ph=m.phone.replace(/\D/g,'');
+      const msg=buildMsg(m);
+      const url=`https://wa.me/91${ph}?text=${encodeURIComponent(msg)}`;
+      window.open(url,'_blank');
+      setSent(prev=>new Set([...prev,m.id]));
+      if(i<toSend.length-1) await new Promise(r=>setTimeout(r,1500));
+    }
+    setSending(false);
+    notify({t:'success',m:`Opened WhatsApp for ${toSend.length} member${toSend.length>1?'s':''}!`});
+  };
+
+  const noPhoneMembers=members.filter(m=>!m.phone||m.phone.replace(/\D/g,'').length<10);
+
+  return(<div className="ov" onClick={onClose}><div className="mdl mdl-lg" onClick={e=>e.stopPropagation()}>
+    <div className="mdl-t">📢 Send Payment Reminders</div>
+    <p style={{fontSize:13,color:'var(--ts)',marginBottom:16,lineHeight:1.6}}>
+      Select members to send WhatsApp payment reminders. Only members with phone numbers are listed.
+    </p>
+
+    {/* Quick actions */}
+    <div style={{display:'flex',gap:8,marginBottom:14,flexWrap:'wrap'}}>
+      <button className="btn btn-g btn-xs" onClick={selectAll}>Select All ({withPhone.length})</button>
+      <button className="btn btn-sa btn-xs" onClick={selectUnpaid}>Unpaid Only ({unpaidWithPhone.length})</button>
+      <button className="btn btn-gh btn-xs" onClick={selectNone}>Deselect All</button>
+    </div>
+
+    {/* Search */}
+    <div className="swrp" style={{marginBottom:14}}>
+      <span className="sico">🔍</span>
+      <input className="sinp" style={{padding:'10px 14px 10px 42px',fontSize:13}} placeholder="Search members…" value={search} onChange={e=>setSearch(e.target.value)}/>
+    </div>
+
+    {/* Selected count */}
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12,fontSize:13}}>
+      <span style={{color:'var(--ts)'}}>📱 {withPhone.length} with phone | <span style={{color:'var(--g)',fontWeight:700}}>{selected.size} selected</span></span>
+      {noPhoneMembers.length>0&&<span style={{color:'var(--rb)',fontSize:11}}>{noPhoneMembers.length} without phone</span>}
+    </div>
+
+    {/* Member list */}
+    <div style={{maxHeight:'45vh',overflowY:'auto',display:'flex',flexDirection:'column',gap:6,marginBottom:18,paddingRight:4}}>
+      {filteredMembers.length===0?<div className="emp" style={{padding:30}}><div className="emp-t">No members with phone numbers</div></div>
+      :filteredMembers.map(m=>{
+        const isOn=selected.has(m.id);
+        const isSent=sent.has(m.id);
+        const paid=isPaid(m.id);
+        const total=ct(m.id)+rt(m.id);
+        return(
+          <div key={m.id} className={`rem-item ${isOn?'sel':''}`} onClick={()=>!sending&&toggle(m.id)}>
+            <div className={`chk ${isOn?'on':''}`}></div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+                <span style={{fontWeight:700,fontSize:14,color:isOn?'var(--g)':'var(--tp)'}}>{cap(m.name)}</span>
+                {m.location&&<span style={{fontSize:11,color:'var(--ts)'}}>📍{m.location}</span>}
+                {paid&&<span className="bdg bdg-p" style={{fontSize:9}}>Paid</span>}
+                {isSent&&<span className="bdg bdg-a" style={{fontSize:9}}>✅ Sent</span>}
+              </div>
+              <div style={{fontSize:11,color:'var(--ts)',marginTop:2}}>
+                📞 {m.phone} · Total: <span style={{color:'var(--g)',fontWeight:600}}>{fmt(total)}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    {/* Sending progress */}
+    {sending&&(
+      <div className="sending">
+        <div className="sending-dot"></div>
+        <span>Opening WhatsApp… ({sent.size}/{selected.size} done)</span>
+      </div>
+    )}
+
+    {/* Actions */}
+    <div className="mdl-a">
+      <button className="btn btn-gh btn-f" onClick={onClose} disabled={sending}>Close</button>
+      <button className={`btn btn-w btn-f ${selected.size===0||sending?'btn-dis':''}`} onClick={sendReminders}>
+        💬 Send to {selected.size} Member{selected.size!==1?'s':''}
+      </button>
+    </div>
+
+    {noPhoneMembers.length>0&&(
+      <details style={{marginTop:14}}>
+        <summary style={{fontSize:12,color:'var(--ts)',cursor:'pointer'}}>⚠️ {noPhoneMembers.length} members without phone numbers</summary>
+        <div style={{marginTop:8,display:'flex',flexWrap:'wrap',gap:6}}>
+          {noPhoneMembers.map(m=><span key={m.id} style={{fontSize:11,padding:'3px 8px',background:'rgba(239,35,60,.08)',border:'1px solid rgba(239,35,60,.2)',borderRadius:6,color:'var(--rb)'}}>{cap(m.name)}</span>)}
+        </div>
+      </details>
+    )}
+  </div></div>);
+}
+
+/* Header */
+function Hdr({nav,onReminder}){
+  return(<header className="hdr"><div className="hdr-in">
+    <div className="logo" onClick={()=>nav('dash')}><div className="logo-b">Z</div><div><div className="logo-n">Z — CHITTI</div><div className="logo-t">Management Made Simple</div></div></div>
+    <div className="hdr-a">
+      <button className="btn btn-w btn-sm" onClick={onReminder}>📢 Reminders</button>
+      <button className="btn btn-gh btn-sm" onClick={()=>nav('monthly')}>📊 Monthly</button>
+      <button className="btn btn-g btn-sm" onClick={()=>nav('add')}>＋ Add</button>
+    </div>
+  </div></header>);
+}
+
+/* Stat Card */
+function SC({icon,label,value,sub,c}){
+  return(<div className="sc" style={{position:'relative'}}>
+    <div className="sc-gl" style={{background:c}}></div>
+    <div style={{position:'absolute',inset:0,borderRadius:14,border:`1px solid ${c}55`}}></div>
+    <div style={{position:'relative'}}>
+      <div style={{fontSize:26,marginBottom:10}}>{icon}</div>
+      <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',color:c,marginBottom:7}}>{label}</div>
+      <div style={{fontSize:typeof value==='number'?30:20,fontWeight:900,color:c,lineHeight:1}}>{value}</div>
+      <div style={{fontSize:11,color:c,opacity:.65,marginTop:6}}>{sub}</div>
+    </div>
+  </div>);
+}
+
+/* Dashboard */
+function Dash({nav,notify}){
+  const [members,setM]=useState([]);
+  const [chittis,setC]=useState([]);
+  const [rd,setR]=useState([]);
+  const [payments,setP]=useState([]);
+  const [q,setQ]=useState('');
+  const [tab,setTab]=useState('active');
+
+  useEffect(()=>{
+    const sync=()=>{setM(DB.g('members'));setC(DB.g('chittis'));setR(DB.g('rdEntries'));setP(DB.g('payments'))};
+    sync();window.addEventListener('focus',sync);window.addEventListener('storage',sync);
+    return()=>{window.removeEventListener('focus',sync);window.removeEventListener('storage',sync)};
+  },[]);
+
+  const ct=mId=>chittis.filter(c=>c.memberId===mId).reduce((s,c)=>s+Number(c.amount),0);
+  const rt=mId=>rd.filter(r=>r.memberId===mId).reduce((s,r)=>s+Number(r.amount),0);
+  const active=members.filter(m=>m.status==='active');
+  const c=curM();
+  const grand=active.reduce((s,m)=>s+ct(m.id)+rt(m.id),0);
+  const coll=payments.filter(p=>p.month===c).reduce((s,p)=>s+Number(p.chittiAmount||0)+Number(p.rdAmount||0),0);
+  const paidN=active.filter(m=>{const p=payments.find(pp=>pp.memberId===m.id&&pp.month===c);return p&&p.status==='paid'}).length;
+
+  const filtered=useMemo(()=>{
+    const lq=q.toLowerCase().trim();
+    return members.filter(m=>{
+      if(tab==='active'?m.status!=='active':m.status!=='quit')return false;
+      if(!lq)return true;
+      return m.name.toLowerCase().includes(lq)||(m.nickname||'').toLowerCase().includes(lq)||(m.location||'').toLowerCase().includes(lq);
+    });
+  },[members,q,tab]);
+
+  return(<div className="pg">
+    <div className="g4" style={{marginBottom:26}}>
+      <SC icon="👥" label="Active Members" value={active.length} sub={`${members.filter(m=>m.status==='quit').length} past`} c="#f0b429"/>
+      <SC icon="💰" label="Total Portfolio" value={fmt(grand)} sub="All chittis + RD" c="#4895ef"/>
+      <SC icon="✅" label="Collected" value={fmt(coll)} sub={mLbl(c)} c="#06d6a0"/>
+      <SC icon="⚠️" label="Pending" value={active.length-paidN} sub={`${paidN} paid`} c="#ef233c"/>
+    </div>
+    <div className="crd">
+      <div className="sh">
+        <div className="sh-t">Members <span>Directory</span><span className="cp">{filtered.length}</span></div>
+        <div style={{display:'flex',gap:8}}>
+          <button className="btn btn-g btn-sm" onClick={()=>nav('add')}>＋ Add</button>
+        </div>
+      </div>
+      <div className="swrp" style={{marginBottom:14}}><span className="sico">🔍</span>
+        <input className="sinp" placeholder="Search by name, nickname, or location…" value={q} onChange={e=>setQ(e.target.value)}/>
+      </div>
+      <div className="tabs" style={{marginBottom:16}}>
+        <button className={`tab ${tab==='active'?'on':''}`} onClick={()=>setTab('active')}>🟢 Active<span className="cp">{members.filter(m=>m.status==='active').length}</span></button>
+        <button className={`tab ${tab==='quit'?'on':''}`} onClick={()=>setTab('quit')}>⚫ Past<span className="cp">{members.filter(m=>m.status==='quit').length}</span></button>
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:8}}>
+        {filtered.length===0?<div className="emp"><div className="emp-i">🔎</div><div className="emp-t">{q?'No results':'No members'}</div></div>
+        :filtered.map((m,i)=>{const tc=ct(m.id),tr2=rt(m.id);return(
+          <div key={m.id} className="mc sra" style={{animationDelay:`${Math.min(i*12,180)}ms`}} onClick={()=>nav('detail',m.id)}>
+            <div className="mc-av">{ini(m.name)}</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div className="mc-nm">{cap(m.name)}</div>
+              <div className="mc-sub">
+                {m.location&&<span>📍{m.location}</span>}
+                {m.nickname&&<span className="ttl">"{m.nickname}"</span>}
+                <span className={`bdg bdg-${m.status==='active'?'a':'q'}`}><span className={`dot dot-${m.status==='active'?'a':'q'}`}></span>{m.status==='active'?'Active':'Quit'}</span>
+              </div>
+            </div>
+            <div className="mc-rt">
+              {tc>0&&<div className="ab"><div className="ab-l tg">Chitti</div><div className="ab-v tg">{fmt(tc)}</div></div>}
+              {tr2>0&&<div className="ab"><div className="ab-l tv">RD</div><div className="ab-v tv">{fmt(tr2)}</div></div>}
+              <div className="ab"><div className="ab-l tro">Total</div><div className="ab-v tro">{fmt(tc+tr2)}</div></div>
+            </div>
+          </div>
+        )})}
+      </div>
+    </div>
+  </div>);
+}
+
+/* Member Form */
+function MForm({memberId,nav,notify}){
+  const isE=!!memberId;
+  const [f,sF]=useState({name:'',nickname:'',phone:'',location:'',notes:'',status:'active'});
+  const [ch,sCh]=useState([{num:'1',amt:''}]);
+  const [ra,sRa]=useState('');
+  const [er,sEr]=useState({});
+  const [dm,sDm]=useState(false);
+
+  useEffect(()=>{
+    if(!isE)return;
+    const m=DB.g('members').find(x=>x.id===memberId);
+    if(!m)return;
+    sF({name:m.name,nickname:m.nickname||'',phone:m.phone||'',location:m.location||'',notes:m.notes||'',status:m.status});
+    const cs=DB.g('chittis').filter(x=>x.memberId===memberId);
+    sCh(cs.length?cs.map(x=>({num:String(x.chittiNumber),amt:String(x.amount)})):[{num:'1',amt:''}]);
+    const r=DB.g('rdEntries').find(x=>x.memberId===memberId);
+    sRa(r?String(r.amount):'');
+  },[memberId]);
+
+  const val=()=>{
+    const e={};
+    if(!f.name.trim())e.name='Required';
+    if(f.phone&&!/^\d{10}$/.test(f.phone.replace(/\s/g,'')))e.phone='Must be 10 digits';
+    ch.forEach((c,i)=>{if(c.amt&&(isNaN(c.amt)||Number(c.amt)<=0))e[`c${i}`]='Invalid'});
+    if(ra&&(isNaN(ra)||Number(ra)<=0))e.rd='Invalid';
+    sEr(e);return!Object.keys(e).length;
+  };
+
+  const save=()=>{
+    if(!val())return;
+    const now=new Date().toISOString();
+    if(isE){
+      DB.s('members',DB.g('members').map(m=>m.id===memberId?{...m,...f,updatedAt:now}:m));
+      let aC=DB.g('chittis').filter(c=>c.memberId!==memberId);
+      ch.filter(c=>c.amt).forEach((c,i)=>aC.push({id:Date.now()+i,memberId,chittiNumber:c.num||String(i+1),amount:Number(c.amt),createdAt:now}));
+      DB.s('chittis',aC);
+      let aR=DB.g('rdEntries').filter(r=>r.memberId!==memberId);
+      if(ra&&Number(ra)>0)aR.push({id:Date.now(),memberId,amount:Number(ra),createdAt:now});
+      DB.s('rdEntries',aR);
+      notify({t:'success',m:'Member updated!'});nav('detail',memberId);
+    }else{
+      const nid=DB.nid('members');
+      DB.s('members',[...DB.g('members'),{id:nid,...f,name:cap(f.name.trim()),createdAt:now}]);
+      let aC=DB.g('chittis');
+      ch.filter(c=>c.amt).forEach((c,i)=>aC.push({id:Date.now()+i,memberId:nid,chittiNumber:c.num||String(i+1),amount:Number(c.amt),createdAt:now}));
+      DB.s('chittis',aC);
+      let aR=DB.g('rdEntries');
+      if(ra&&Number(ra)>0)aR.push({id:Date.now(),memberId:nid,amount:Number(ra),createdAt:now});
+      DB.s('rdEntries',aR);
+      notify({t:'success',m:'Member added!'});nav('dash');
+    }
+  };
+
+  const del=()=>{
+    DB.s('members',DB.g('members').filter(m=>m.id!==memberId));
+    DB.s('chittis',DB.g('chittis').filter(c=>c.memberId!==memberId));
+    DB.s('rdEntries',DB.g('rdEntries').filter(r=>r.memberId!==memberId));
+    DB.s('payments',DB.g('payments').filter(p=>p.memberId!==memberId));
+    notify({t:'success',m:'Deleted.'});nav('dash');
+  };
+
+  return(<div className="pg" style={{maxWidth:700}}>
+    {dm&&<Cfm danger title="🗑 Delete Member" text={`Delete "${cap(f.name)}" and all data? Cannot undo.`} onOk={del} onNo={()=>sDm(false)}/>}
+    <button className="bk" onClick={()=>nav(isE?'detail':'dash',memberId)}>← Back</button>
+    <div style={{margin:'16px 0 24px'}}><h1 style={{fontSize:24,fontWeight:800}} className="tgg">{isE?'Edit Member':'New Member'}</h1></div>
+    <div className="fsec"><div className="fsec-t">👤 Personal Info</div>
+      <div className="g2">
+        <div className="fg"><label className="fl">Name *</label><input className={`fi ${er.name?'er':''}`} placeholder="Name" value={f.name} onChange={e=>sF(p=>({...p,name:e.target.value}))}/>{er.name&&<div className="fi-e">{er.name}</div>}</div>
+        <div className="fg"><label className="fl">Nickname</label><input className="fi" placeholder="Optional" value={f.nickname} onChange={e=>sF(p=>({...p,nickname:e.target.value}))}/></div>
+        <div className="fg"><label className="fl">Phone</label><input className={`fi ${er.phone?'er':''}`} placeholder="10 digits" value={f.phone} onChange={e=>sF(p=>({...p,phone:e.target.value}))}/>{er.phone&&<div className="fi-e">{er.phone}</div>}</div>
+        <div className="fg"><label className="fl">Location</label><input className="fi" placeholder="Location/Reference" value={f.location} onChange={e=>sF(p=>({...p,location:e.target.value}))}/></div>
+      </div>
+      {isE&&<div className="fg"><label className="fl">Status</label><select className="fi" value={f.status} onChange={e=>sF(p=>({...p,status:e.target.value}))}><option value="active">Active</option><option value="quit">Quit</option></select></div>}
+      <div className="fg" style={{marginBottom:0,marginTop:12}}><label className="fl">Notes</label><textarea className="fi fi-ta" placeholder="Notes…" value={f.notes} onChange={e=>sF(p=>({...p,notes:e.target.value}))}/></div>
+    </div>
+    <div className="fsec"><div className="fsec-t">🎟 Chitti Details</div>
+      {ch.map((c,i)=>(<div className="crow" key={i}>
+        <div>{i===0&&<label className="fl">Chitti #</label>}<input className="fi" placeholder="#" value={c.num} onChange={e=>sCh(p=>p.map((x,j)=>j===i?{...x,num:e.target.value}:x))}/></div>
+        <div>{i===0&&<label className="fl">Amount (₹)</label>}<input className={`fi ${er[`c${i}`]?'er':''}`} type="number" placeholder="0" value={c.amt} onChange={e=>sCh(p=>p.map((x,j)=>j===i?{...x,amt:e.target.value}:x))}/></div>
+        <div style={{paddingBottom:1}}>{ch.length>1&&<button className="btn btn-r btn-xs" onClick={()=>sCh(p=>p.filter((_,j)=>j!==i))}>✕</button>}</div>
+      </div>))}
+      <button className="btn btn-o btn-sm" onClick={()=>sCh(p=>[...p,{num:String(p.length+1),amt:''}])}>＋ Add Chitti</button>
+    </div>
+    <div className="fsec"><div className="fsec-t">💳 RD (Monthly)</div>
+      <div className="fg" style={{marginBottom:0}}><label className="fl">RD Amount (₹)</label>
+        <input className={`fi ${er.rd?'er':''}`} type="number" placeholder="0" value={ra} onChange={e=>sRa(e.target.value)} style={{maxWidth:280}}/>{er.rd&&<div className="fi-e">{er.rd}</div>}
+      </div>
+    </div>
+    <div style={{display:'flex',flexDirection:'column',gap:10}}>
+      <button className="btn btn-e btn-f" onClick={save}>{isE?'✅ Update':'✅ Add Member'}</button>
+      <button className="btn btn-gh btn-f" onClick={()=>nav(isE?'detail':'dash',memberId)}>Cancel</button>
+      {isE&&<button className="btn btn-r btn-f" onClick={()=>sDm(true)}>🗑 Delete Member</button>}
+    </div>
+  </div>);
+}
+
+/* Member Detail */
+function MDetail({memberId,nav,notify}){
+  const [member,setMm]=useState(null);
+  const [chittis,setCh]=useState([]);
+  const [rd,setRd]=useState([]);
+  const [pay,setPay]=useState([]);
+  const [dtab,setDt]=useState('chittis');
+
+  useEffect(()=>{
+    const sync=()=>{
+      setMm(DB.g('members').find(m=>m.id===memberId)||null);
+      setCh(DB.g('chittis').filter(c=>c.memberId===memberId));
+      setRd(DB.g('rdEntries').filter(r=>r.memberId===memberId));
+      setPay(DB.g('payments').filter(p=>p.memberId===memberId).sort((a,b)=>b.month.localeCompare(a.month)));
+    };
+    sync();window.addEventListener('focus',sync);return()=>window.removeEventListener('focus',sync);
+  },[memberId]);
+
+  if(!member)return<div className="pg"><div className="emp"><div className="emp-i">❓</div><div className="emp-t">Not found</div></div></div>;
+
+  const cT=chittis.reduce((s,c)=>s+Number(c.amount),0);
+  const rT=rd.reduce((s,r)=>s+Number(r.amount),0);
+  const tot=cT+rT;
+
+  const wa=()=>{
+    if(!member.phone)return;
+    const ph=member.phone.replace(/\D/g,'');
+    const cl=chittis.map(c=>`  🎟 Chitti #${c.chittiNumber}: ${fmt(c.amount)}`).join('\n');
+    const rl=rd.length?`\n  💳 RD: ${fmt(rT)}`:'';
+    const msg=`Dear ${cap(member.name)},\n\nAssalamu Alaikum! I hope this message finds you well.\n\nHere are your payment details for the Chitti:\n\n${cl}${rl}\n\n📊 Total Amount Due: ${fmt(tot)}\n\nKindly arrange the payment at your earliest convenience.\n\nJazakAllahu Khairan!\n\nBest regards,\nZ — Chitti Management`;
+    window.open(`https://wa.me/91${ph}?text=${encodeURIComponent(msg)}`,'_blank');
+  };
+
+  return(<div className="pg">
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20,flexWrap:'wrap',gap:10}}>
+      <button className="bk" onClick={()=>nav('dash')}>← Dashboard</button>
+      <button className="btn btn-o btn-sm" onClick={()=>nav('edit',memberId)}>✏️ Edit</button>
+    </div>
+    <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:24,flexWrap:'wrap'}}>
+      <div style={{width:64,height:64,borderRadius:16,background:'linear-gradient(135deg,rgba(240,180,41,.2),rgba(255,159,28,.1))',border:'1.5px solid var(--bdb)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,fontWeight:900,color:'var(--g)',flexShrink:0}}>{ini(member.name)}</div>
+      <div><h1 style={{fontSize:28,fontWeight:900,lineHeight:1.1,background:'linear-gradient(90deg,var(--gl),var(--am))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{cap(member.name)}</h1>
+        <div style={{display:'flex',gap:8,marginTop:5,alignItems:'center',flexWrap:'wrap'}}>
+          <span className={`bdg bdg-${member.status==='active'?'a':'q'}`}><span className={`dot dot-${member.status==='active'?'a':'q'}`}></span>{member.status==='active'?'Active':'Quit'}</span>
+          {member.location&&<span style={{fontSize:12,color:'var(--ts)'}}>📍{member.location}</span>}
+          {member.nickname&&<span style={{fontSize:12}} className="ttl">"{member.nickname}"</span>}
+        </div>
+      </div>
+    </div>
+
+    <div className="g3" style={{marginBottom:22}}>
+      <div className="crd crd-ro"><div style={{fontSize:12,fontWeight:700,color:'var(--ro)',textTransform:'uppercase',letterSpacing:1,marginBottom:14}}>📱 Contact</div>
+        <div className="ir"><span className="ir-i">📞</span><div><div className="ir-l">Phone</div><div className="ir-v">{member.phone||'Not provided'}</div></div></div>
+        <div className="ir"><span className="ir-i">📍</span><div><div className="ir-l">Location</div><div className="ir-v">{member.location||'—'}</div></div></div>
+        {member.notes&&<div className="ir"><span className="ir-i">📝</span><div><div className="ir-l">Notes</div><div className="ir-v" style={{fontSize:13}}>{member.notes}</div></div></div>}
+        {member.phone?<button className="btn btn-w btn-f" style={{marginTop:14}} onClick={wa}>💬 WhatsApp Reminder</button>
+          :<div style={{marginTop:14,padding:'9px 12px',background:'rgba(255,107,157,.05)',borderRadius:8,fontSize:12,color:'var(--ts)',textAlign:'center'}}>Add phone to enable WhatsApp</div>}
+      </div>
+      <div className="crd crd-g"><div style={{fontSize:12,fontWeight:700,color:'var(--g)',textTransform:'uppercase',letterSpacing:1,marginBottom:14}}>💰 Chitti Amount</div>
+        <div className="bn tg" style={{marginBottom:12}}>{fmt(cT)}</div>
+        {chittis.length===0?<div style={{color:'var(--ts)',fontSize:13}}>No chittis</div>:chittis.map(c=>(
+          <div key={c.id} style={{display:'flex',justifyContent:'space-between',padding:'6px 0',borderBottom:'1px solid rgba(240,180,41,.1)',fontSize:13}}>
+            <span style={{color:'var(--ts)'}}>#{c.chittiNumber}</span><span style={{color:'var(--gl)',fontWeight:700}}>{fmt(c.amount)}</span></div>
+        ))}
+      </div>
+      <div className="crd crd-v"><div style={{fontSize:12,fontWeight:700,color:'var(--vi)',textTransform:'uppercase',letterSpacing:1,marginBottom:14}}>💳 RD Amount</div>
+        <div className="bn tv" style={{marginBottom:12}}>{fmt(rT)}</div>
+        {rd.length===0?<div style={{color:'var(--ts)',fontSize:13}}>No RD</div>:rd.map(r=>(
+          <div key={r.id} style={{display:'flex',justifyContent:'space-between',padding:'6px 0',borderBottom:'1px solid rgba(177,133,219,.1)',fontSize:13}}>
+            <span style={{color:'var(--ts)'}}>Monthly</span><span style={{color:'var(--vi)',fontWeight:700}}>{fmt(r.amount)}</span></div>
+        ))}
+        <div style={{marginTop:10,padding:'8px 12px',background:'rgba(177,133,219,.1)',borderRadius:8,fontSize:13}}>
+          <span style={{color:'var(--ts)'}}>Total/Month: </span><span style={{color:'var(--vi)',fontWeight:800}}>{fmt(tot)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="crd">
+      <div className="tabs" style={{maxWidth:340,marginBottom:16}}>
+        {['chittis','rd','payments'].map(t=>(<button key={t} className={`tab ${dtab===t?'on':''}`} onClick={()=>setDt(t)}>
+          {t==='chittis'?'🎟 Chittis':t==='rd'?'💳 RD':'💸 Payments'}
+        </button>))}
+      </div>
+      {dtab==='chittis'&&(chittis.length===0?<div className="emp"><div className="emp-i">🎟</div><div className="emp-t">No chittis</div></div>:
+        <div style={{display:'flex',flexDirection:'column',gap:7}}>
+          {chittis.map(c=>(<div key={c.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 14px',background:'var(--bg2)',borderRadius:10,border:'1px solid var(--bd)'}}>
+            <span style={{fontWeight:600}}>Chitti #{c.chittiNumber}</span><span style={{fontWeight:800,fontSize:16,color:'var(--g)'}}>{fmt(c.amount)}</span>
+          </div>))}
+          <div style={{display:'flex',justifyContent:'space-between',padding:'11px 14px',background:'rgba(240,180,41,.08)',borderRadius:10,border:'1px solid rgba(240,180,41,.2)'}}>
+            <span style={{fontWeight:700,color:'var(--g)'}}>Total</span><span style={{fontWeight:900,fontSize:17,color:'var(--g)'}}>{fmt(cT)}</span>
+          </div>
+        </div>)}
+      {dtab==='rd'&&(rd.length===0?<div className="emp"><div className="emp-i">💳</div><div className="emp-t">No RD</div></div>:
+        <div style={{display:'flex',flexDirection:'column',gap:7}}>{rd.map(r=>(<div key={r.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 14px',background:'var(--bg2)',borderRadius:10,border:'1px solid rgba(177,133,219,.25)'}}>
+          <span style={{fontWeight:600}}>Monthly RD</span><span style={{fontWeight:800,fontSize:16,color:'var(--vi)'}}>{fmt(r.amount)}</span>
+        </div>))}</div>)}
+      {dtab==='payments'&&(pay.length===0?<div className="emp"><div className="emp-i">💸</div><div className="emp-t">No records</div><div className="emp-s">Use Monthly Summary to add</div></div>:
+        <div style={{display:'flex',flexDirection:'column',gap:7}}>{pay.map(p=>(<div key={p.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 14px',background:'var(--bg2)',borderRadius:10,border:'1px solid var(--bd)',flexWrap:'wrap',gap:8}}>
+          <div><div style={{fontWeight:700,fontSize:14}}>{mLbl(p.month)}</div><div style={{fontSize:11,color:'var(--ts)',marginTop:2}}>Chitti: {fmt(p.chittiAmount)} · RD: {fmt(p.rdAmount)}</div></div>
+          <span className={`bdg bdg-${p.status==='paid'?'p':p.status==='partial'?'pt':'u'}`}>{p.status==='paid'?'✅ Paid':p.status==='partial'?'⚠️ Partial':'❌ Unpaid'}</span>
+        </div>))}</div>)}
+    </div>
+  </div>);
+}
+
+/* Monthly */
+function Monthly({nav,notify}){
+  const [sel,setSel]=useState(curM());
+  const [members,setM]=useState([]);
+  const [chittis,setC]=useState([]);
+  const [rd,setR]=useState([]);
+  const [payments,setP]=useState([]);
+  const [sort,setSort]=useState('name');
+  const [editRow,setER]=useState(null);
+  const [sq,setSq]=useState('');
+
+  useEffect(()=>{
+    const sync=()=>{setM(DB.g('members').filter(m=>m.status==='active'));setC(DB.g('chittis'));setR(DB.g('rdEntries'));setP(DB.g('payments'))};
+    sync();window.addEventListener('focus',sync);return()=>window.removeEventListener('focus',sync);
+  },[]);
+
+  const months=useMemo(()=>{const r=[];const n=new Date();for(let i=0;i<24;i++){const d=new Date(n.getFullYear(),n.getMonth()-i,1);r.push(d.toISOString().slice(0,7))}return r},[]);
+
+  const ct=mId=>chittis.filter(c=>c.memberId===mId).reduce((s,c)=>s+Number(c.amount),0);
+  const rt=mId=>rd.filter(r=>r.memberId===mId).reduce((s,r)=>s+Number(r.amount),0);
+
+  const rows=useMemo(()=>{
+    const lq=sq.toLowerCase().trim();
+    let r=members
+      .filter(m=>!lq||(m.name.toLowerCase().includes(lq)||(m.location||'').toLowerCase().includes(lq)||(m.nickname||'').toLowerCase().includes(lq)))
+      .map(m=>{const p=payments.find(pp=>pp.memberId===m.id&&pp.month===sel);const cd=ct(m.id),rd2=rt(m.id),tot=cd+rd2,st=p?p.status:'unpaid';return{member:m,cd,rd2,tot,pay:p,st}});
+    if(sort==='name')r.sort((a,b)=>a.member.name.localeCompare(b.member.name));
+    else if(sort==='status'){const o={paid:0,partial:1,unpaid:2};r.sort((a,b)=>o[a.st]-o[b.st])}
+    else if(sort==='amt')r.sort((a,b)=>b.tot-a.tot);
+    return r;
+  },[members,chittis,rd,payments,sel,sort,sq]);
+
+  const stats=useMemo(()=>({total:rows.length,paid:rows.filter(r=>r.st==='paid').length,partial:rows.filter(r=>r.st==='partial').length,unpaid:rows.filter(r=>r.st==='unpaid').length,
+    coll:rows.reduce((s,r)=>s+(r.pay?Number(r.pay.chittiAmount||0)+Number(r.pay.rdAmount||0):0),0),due:rows.reduce((s,r)=>s+r.tot,0)}),[rows]);
+
+  const savePay=(mId,status,ca,ra)=>{
+    let all=DB.g('payments');
+    const ex=all.find(p=>p.memberId===mId&&p.month===sel);
+    if(ex)all=all.map(p=>p.id===ex.id?{...p,status,chittiAmount:Number(ca||0),rdAmount:Number(ra||0),updatedAt:new Date().toISOString()}:p);
+    else all.push({id:Date.now(),memberId:mId,month:sel,chittiAmount:Number(ca||0),rdAmount:Number(ra||0),status,createdAt:new Date().toISOString()});
+    DB.s('payments',all);setP(DB.g('payments'));setER(null);notify({t:'success',m:'Payment updated!'});
+  };
+
+  return(<div className="pg">
+    <button className="bk" onClick={()=>nav('dash')}>← Dashboard</button>
+    <div style={{margin:'16px 0 22px'}}><h1 style={{fontSize:24,fontWeight:800}} className="tgg">Monthly Summary</h1></div>
+    <div style={{display:'flex',gap:10,marginBottom:18,flexWrap:'wrap',alignItems:'center'}}>
+      <select className="msel" value={sel} onChange={e=>setSel(e.target.value)}>{months.map(m=><option key={m} value={m}>{mLbl(m)}</option>)}</select>
+      <select className="msel" value={sort} onChange={e=>setSort(e.target.value)}><option value="name">A–Z</option><option value="status">Status</option><option value="amt">Amount</option></select>
+      <div style={{flex:1,minWidth:160,position:'relative'}}><span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',color:'var(--ts)',fontSize:14}}>🔍</span>
+        <input className="msel" style={{paddingLeft:34,width:'100%'}} placeholder="Search…" value={sq} onChange={e=>setSq(e.target.value)}/></div>
+    </div>
+    <div className="g4" style={{marginBottom:16}}>
+      <div className="crd" style={{textAlign:'center',padding:14}}><div style={{fontSize:24,fontWeight:900,color:'var(--sa)'}}>{stats.total}</div><div style={{fontSize:10,color:'var(--ts)',marginTop:3}}>Total</div></div>
+      <div className="crd" style={{textAlign:'center',padding:14}}><div style={{fontSize:24,fontWeight:900,color:'var(--em)'}}>{stats.paid}</div><div style={{fontSize:10,color:'var(--ts)',marginTop:3}}>✅ Paid</div></div>
+      <div className="crd" style={{textAlign:'center',padding:14}}><div style={{fontSize:24,fontWeight:900,color:'var(--g)'}}>{stats.partial}</div><div style={{fontSize:10,color:'var(--ts)',marginTop:3}}>⚠️ Partial</div></div>
+      <div className="crd" style={{textAlign:'center',padding:14}}><div style={{fontSize:24,fontWeight:900,color:'var(--rb)'}}>{stats.unpaid}</div><div style={{fontSize:10,color:'var(--ts)',marginTop:3}}>❌ Unpaid</div></div>
+    </div>
+    <div style={{display:'flex',gap:12,marginBottom:18,flexWrap:'wrap'}}>
+      <div className="crd" style={{flex:1,padding:'10px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}><span style={{color:'var(--ts)',fontSize:12}}>Due</span><span style={{fontSize:18,fontWeight:900,color:'var(--ro)'}}>{fmt(stats.due)}</span></div>
+      <div className="crd" style={{flex:1,padding:'10px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}><span style={{color:'var(--ts)',fontSize:12}}>Collected</span><span style={{fontSize:18,fontWeight:900,color:'var(--em)'}}>{fmt(stats.coll)}</span></div>
+      <div className="crd" style={{flex:1,padding:'10px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}><span style={{color:'var(--ts)',fontSize:12}}>Remaining</span><span style={{fontSize:18,fontWeight:900,color:'var(--rb)'}}>{fmt(stats.due-stats.coll)}</span></div>
+    </div>
+    <div className="crd" style={{padding:0,overflow:'hidden'}}><div className="tbw"><table className="tbl"><thead><tr>
+      <th>#</th><th>Member</th><th>Location</th><th>Chitti</th><th>RD</th><th>Total</th><th>Paid</th><th>Status</th><th>Action</th>
+    </tr></thead><tbody>
+      {rows.length===0?<tr><td colSpan={9} style={{textAlign:'center',padding:36,color:'var(--ts)'}}>No members</td></tr>
+      :rows.map((r,i)=>{const pa=r.pay?Number(r.pay.chittiAmount||0)+Number(r.pay.rdAmount||0):0;return(
+        <tr key={r.member.id}>
+          <td style={{color:'var(--ts)',fontSize:11}}>{i+1}</td>
+          <td><div style={{fontWeight:700,color:'var(--g)',fontSize:13,cursor:'pointer'}} onClick={()=>nav('detail',r.member.id)}>{cap(r.member.name)}</div>{r.member.nickname&&<div style={{fontSize:10,color:'var(--tl)'}}>{r.member.nickname}</div>}</td>
+          <td style={{color:'var(--ts)',fontSize:11}}>{r.member.location||'—'}</td>
+          <td style={{color:'var(--sa)',fontWeight:600,fontSize:12}}>{fmt(r.cd)}</td>
+          <td style={{color:'var(--vi)',fontWeight:600,fontSize:12}}>{fmt(r.rd2)}</td>
+          <td style={{color:'var(--g)',fontWeight:800,fontSize:13}}>{fmt(r.tot)}</td>
+          <td style={{color:pa>0?'var(--em)':'var(--ts)',fontWeight:600,fontSize:12}}>{pa>0?fmt(pa):'—'}</td>
+          <td><span className={`bdg bdg-${r.st==='paid'?'p':r.st==='partial'?'pt':'u'}`}>{r.st==='paid'?'✅':r.st==='partial'?'⚠️':'❌'} {r.st.charAt(0).toUpperCase()+r.st.slice(1)}</span></td>
+          <td><button className="btn btn-o btn-xs" onClick={()=>setER(r)}>Update</button></td>
+        </tr>
+      )})}
+    </tbody></table></div></div>
+    {editRow&&<PMdl row={editRow} month={sel} onSave={(s,a,b)=>savePay(editRow.member.id,s,a,b)} onClose={()=>setER(null)}/>}
+  </div>);
+}
+
+function PMdl({row,month,onSave,onClose}){
+  const [st,sSt]=useState(row.pay?.status||'unpaid');
+  const [ca,sCa]=useState(String(row.pay?.chittiAmount||''));
+  const [ra,sRa]=useState(String(row.pay?.rdAmount||''));
+  const pt=Number(ca||0)+Number(ra||0);
+  return(<div className="ov" onClick={onClose}><div className="mdl" onClick={e=>e.stopPropagation()}>
+    <div className="mdl-t">💸 Update Payment</div>
+    <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
+      <div style={{width:40,height:40,borderRadius:10,background:'rgba(240,180,41,.15)',border:'1px solid var(--bdb)',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,color:'var(--g)',fontSize:14}}>{ini(row.member.name)}</div>
+      <div><div style={{fontWeight:700,color:'var(--g)',fontSize:16}}>{cap(row.member.name)}</div><div style={{fontSize:11,color:'var(--ts)'}}>{mLbl(month)} · Due: {fmt(row.tot)}</div></div>
+    </div>
+    <div className="fg"><label className="fl">Chitti Paid (₹) <span style={{color:'var(--ts)',fontWeight:400,textTransform:'none',letterSpacing:0}}>— due {fmt(row.cd)}</span></label><input className="fi" type="number" value={ca} onChange={e=>sCa(e.target.value)} placeholder="0"/></div>
+    <div className="fg"><label className="fl">RD Paid (₹) <span style={{color:'var(--ts)',fontWeight:400,textTransform:'none',letterSpacing:0}}>— due {fmt(row.rd2)}</span></label><input className="fi" type="number" value={ra} onChange={e=>sRa(e.target.value)} placeholder="0"/></div>
+    <div className="fg" style={{marginBottom:6}}><label className="fl">Status</label><select className="fi" value={st} onChange={e=>sSt(e.target.value)}><option value="paid">✅ Paid</option><option value="partial">⚠️ Partial</option><option value="unpaid">❌ Unpaid</option></select></div>
+    {pt>0&&<div style={{marginBottom:14,padding:'8px 12px',background:'rgba(6,214,160,.08)',borderRadius:8,fontSize:13}}>
+      <span style={{color:'var(--ts)'}}>Recording: </span><span className="te" style={{fontWeight:700}}>{fmt(pt)}</span>
+      {pt<row.tot&&<span className="tr2" style={{fontSize:11,marginLeft:8}}>(Balance: {fmt(row.tot-pt)})</span>}
+    </div>}
+    <div className="mdl-a"><button className="btn btn-gh btn-f" onClick={onClose}>Cancel</button><button className="btn btn-g btn-f" onClick={()=>onSave(st,ca,ra)}>Save</button></div>
+  </div></div>);
+}
+
+/* App */
+function App(){
+  const [pg,sPg]=useState('dash');
+  const [dt,sDt]=useState(null);
+  const [ntf,sNtf]=useState(null);
+  const [showReminder,setSR]=useState(false);
+  const [rk,sRk]=useState(0);
+  const nav=(p,d)=>{sPg(p);sDt(d??null);sRk(k=>k+1);window.scrollTo({top:0,behavior:'smooth'})};
+  const notify=n=>sNtf(n);
+  return(<>
+    <Hdr nav={nav} onReminder={()=>setSR(true)}/>
+    {pg==='dash'&&<Dash key={rk} nav={nav} notify={notify}/>}
+    {pg==='add'&&<MForm key={rk} memberId={null} nav={nav} notify={notify}/>}
+    {pg==='edit'&&<MForm key={rk} memberId={dt} nav={nav} notify={notify}/>}
+    {pg==='detail'&&<MDetail key={rk} memberId={dt} nav={nav} notify={notify}/>}
+    {pg==='monthly'&&<Monthly key={rk} nav={nav} notify={notify}/>}
+    {showReminder&&<ReminderModal onClose={()=>setSR(false)} notify={notify}/>}
+    <Ntf n={ntf} onClose={()=>sNtf(null)}/>
+  </>);
+}
+
+ReactDOM.render(<App/>,document.getElementById('root'));
+</script>
+</body>
+</html>
